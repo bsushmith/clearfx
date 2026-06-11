@@ -11,13 +11,14 @@ func (glitchStyle) Description() string {
 	return "scrambled blocks and scanlines snap the terminal clear"
 }
 func (glitchStyle) New(width, height int, opts Options) Animator {
-	return glitchAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return glitchAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type glitchAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a glitchAnimator) Frame(t float64) Frame {
@@ -34,13 +35,13 @@ func (a glitchAnimator) Frame(t float64) Frame {
 				continue
 			}
 			ch := chars[(x*11+y*7+int(t*50))%len(chars)]
-			color := ColorBrightCyan
+			color := a.palette.Secondary
 			if scanline {
-				color = ColorBrightWhite
+				color = a.palette.Primary
 			} else if (x+y+int(t*20))%3 == 0 {
-				color = ColorBrightMagenta
+				color = a.palette.Accent
 			} else if (x+y)%4 == 0 {
-				color = ColorBrightGreen
+				color = a.palette.Highlight
 			}
 			f.Set(x, y, Cell{Ch: ch, Color: color, Bold: scanline})
 		}

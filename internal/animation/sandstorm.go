@@ -13,13 +13,14 @@ func (sandstormStyle) Description() string {
 	return "windblown sand sweeps across the terminal"
 }
 func (sandstormStyle) New(width, height int, opts Options) Animator {
-	return sandstormAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return sandstormAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type sandstormAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a sandstormAnimator) Frame(t float64) Frame {
@@ -32,10 +33,10 @@ func (a sandstormAnimator) Frame(t float64) Frame {
 			n := pseudoNoise(x-gust, y*3, t*0.25)
 			if n > 0.82 || (x+y+gust)%density == 0 {
 				ch := '.'
-				color := ColorYellow
+				color := a.palette.Warm
 				if n > 0.94 {
 					ch = '*'
-					color = ColorBrightYellow
+					color = a.palette.Accent
 				} else if (x+y)%4 == 0 {
 					ch = '-'
 				}

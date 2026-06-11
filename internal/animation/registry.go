@@ -31,6 +31,8 @@ type Metadata struct {
 	Category            string
 	RecommendedDuration time.Duration
 	RecommendedFPS      int
+	SupportedPalettes   []string
+	Experimental        bool
 }
 
 var styles = map[string]Style{}
@@ -93,6 +95,7 @@ func MetadataFor(name string) Metadata {
 		Category:            "effect",
 		RecommendedDuration: 700 * time.Millisecond,
 		RecommendedFPS:      30,
+		SupportedPalettes:   PaletteNames(),
 	}
 	if override, ok := styleMetadata[name]; ok {
 		if override.Category != "" {
@@ -104,28 +107,32 @@ func MetadataFor(name string) Metadata {
 		if override.RecommendedFPS > 0 {
 			meta.RecommendedFPS = override.RecommendedFPS
 		}
+		if len(override.SupportedPalettes) > 0 {
+			meta.SupportedPalettes = append([]string(nil), override.SupportedPalettes...)
+		}
+		meta.Experimental = override.Experimental
 	}
 	return meta
 }
 
 var styleMetadata = map[string]Metadata{
-	"aurora":           {Category: "ambient", RecommendedDuration: 1200 * time.Millisecond, RecommendedFPS: 45},
+	"aurora":           {Category: "ambient", RecommendedDuration: 1200 * time.Millisecond, RecommendedFPS: 45, Experimental: true},
 	"black-hole":       {Category: "collapse", RecommendedDuration: 900 * time.Millisecond, RecommendedFPS: 45},
-	"dune-worm":        {Category: "creature", RecommendedDuration: 1200 * time.Millisecond, RecommendedFPS: 45},
+	"dune-worm":        {Category: "creature", RecommendedDuration: 1200 * time.Millisecond, RecommendedFPS: 45, Experimental: true},
 	"fire":             {Category: "elemental", RecommendedDuration: 700 * time.Millisecond, RecommendedFPS: 30},
 	"glitch":           {Category: "digital", RecommendedDuration: 550 * time.Millisecond, RecommendedFPS: 45},
 	"great-wave":       {Category: "water", RecommendedDuration: 1200 * time.Millisecond, RecommendedFPS: 45},
-	"ink-drop":         {Category: "wipe", RecommendedDuration: 850 * time.Millisecond, RecommendedFPS: 30},
-	"laser-grid":       {Category: "scan", RecommendedDuration: 650 * time.Millisecond, RecommendedFPS: 45},
+	"ink-drop":         {Category: "wipe", RecommendedDuration: 850 * time.Millisecond, RecommendedFPS: 30, Experimental: true},
+	"laser-grid":       {Category: "scan", RecommendedDuration: 650 * time.Millisecond, RecommendedFPS: 45, Experimental: true},
 	"lightning":        {Category: "weather", RecommendedDuration: 450 * time.Millisecond, RecommendedFPS: 45},
 	"matrix-rain":      {Category: "digital", RecommendedDuration: 900 * time.Millisecond, RecommendedFPS: 45},
 	"meteor-shower":    {Category: "space", RecommendedDuration: 800 * time.Millisecond, RecommendedFPS: 45},
 	"ocean-wave":       {Category: "water", RecommendedDuration: 1000 * time.Millisecond, RecommendedFPS: 45},
 	"page-burn":        {Category: "wipe", RecommendedDuration: 900 * time.Millisecond, RecommendedFPS: 30},
-	"rainstorm":        {Category: "weather", RecommendedDuration: 900 * time.Millisecond, RecommendedFPS: 45},
-	"sandstorm":        {Category: "weather", RecommendedDuration: 850 * time.Millisecond, RecommendedFPS: 45},
-	"shatter":          {Category: "destruction", RecommendedDuration: 850 * time.Millisecond, RecommendedFPS: 45},
-	"snowfall":         {Category: "weather", RecommendedDuration: 1200 * time.Millisecond, RecommendedFPS: 30},
+	"rainstorm":        {Category: "weather", RecommendedDuration: 900 * time.Millisecond, RecommendedFPS: 45, Experimental: true},
+	"sandstorm":        {Category: "weather", RecommendedDuration: 850 * time.Millisecond, RecommendedFPS: 45, Experimental: true},
+	"shatter":          {Category: "destruction", RecommendedDuration: 850 * time.Millisecond, RecommendedFPS: 45, Experimental: true},
+	"snowfall":         {Category: "weather", RecommendedDuration: 1200 * time.Millisecond, RecommendedFPS: 30, Experimental: true},
 	"starfield":        {Category: "space", RecommendedDuration: 850 * time.Millisecond, RecommendedFPS: 45},
 	"typewriter-erase": {Category: "text", RecommendedDuration: 1000 * time.Millisecond, RecommendedFPS: 45},
 }

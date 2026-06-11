@@ -13,13 +13,14 @@ func (snowfallStyle) Description() string {
 	return "snowflakes drift down and blanket the terminal"
 }
 func (snowfallStyle) New(width, height int, opts Options) Animator {
-	return snowfallAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return snowfallAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type snowfallAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a snowfallAnimator) Frame(t float64) Frame {
@@ -41,13 +42,13 @@ func (a snowfallAnimator) Frame(t float64) Frame {
 		} else if i%5 == 0 {
 			ch = '+'
 		}
-		f.Set(x, y, Cell{Ch: ch, Color: ColorBrightWhite, Bold: ch != '.'})
+		f.Set(x, y, Cell{Ch: ch, Color: a.palette.Primary, Bold: ch != '.'})
 	}
 	snowLine := a.height - int(t*float64(a.height)*0.45)
 	for y := snowLine; y < a.height; y++ {
 		for x := 0; x < a.width; x++ {
 			if (x+y)%3 != 0 {
-				f.Set(x, y, Cell{Ch: '.', Color: ColorWhite})
+				f.Set(x, y, Cell{Ch: '.', Color: a.palette.Neutral})
 			}
 		}
 	}

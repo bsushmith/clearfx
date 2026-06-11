@@ -9,13 +9,14 @@ func init() { Register(fireStyle{}) }
 func (fireStyle) Name() string        { return "fire" }
 func (fireStyle) Description() string { return "flames rise from the bottom of the terminal" }
 func (fireStyle) New(width, height int, opts Options) Animator {
-	return fireAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return fireAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type fireAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a fireAnimator) Frame(t float64) Frame {
@@ -33,24 +34,24 @@ func (a fireAnimator) Frame(t float64) Frame {
 			if heat < 0.08 {
 				continue
 			}
-			f.Set(x, y, fireCell(heat))
+			f.Set(x, y, a.fireCell(heat))
 		}
 	}
 	return f
 }
 
-func fireCell(heat float64) Cell {
+func (a fireAnimator) fireCell(heat float64) Cell {
 	switch {
 	case heat > 0.9:
-		return Cell{Ch: '@', Color: ColorBrightWhite, Bold: true}
+		return Cell{Ch: '@', Color: a.palette.Primary, Bold: true}
 	case heat > 0.72:
-		return Cell{Ch: '#', Color: ColorBrightYellow, Bold: true}
+		return Cell{Ch: '#', Color: a.palette.Accent, Bold: true}
 	case heat > 0.52:
-		return Cell{Ch: '*', Color: ColorYellow, Bold: true}
+		return Cell{Ch: '*', Color: a.palette.Warm, Bold: true}
 	case heat > 0.32:
-		return Cell{Ch: ':', Color: ColorBrightRed}
+		return Cell{Ch: ':', Color: a.palette.Highlight}
 	default:
-		return Cell{Ch: '.', Color: ColorRed}
+		return Cell{Ch: '.', Color: a.palette.Alert}
 	}
 }
 

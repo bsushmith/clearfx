@@ -11,13 +11,14 @@ func (starfieldStyle) Description() string {
 	return "stars rush toward the viewer at warp speed"
 }
 func (starfieldStyle) New(width, height int, opts Options) Animator {
-	return starfieldAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return starfieldAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type starfieldAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a starfieldAnimator) Frame(t float64) Frame {
@@ -40,28 +41,28 @@ func (a starfieldAnimator) Frame(t float64) Frame {
 			continue
 		}
 		ch := '.'
-		color := ColorWhite
+		color := a.palette.Neutral
 		if dist > 0.62 {
 			ch = '*'
-			color = ColorBrightWhite
+			color = a.palette.Primary
 		}
 		if dist > 0.82 {
 			ch = '+'
-			color = ColorBrightCyan
-			drawStarTrail(f, x, y, cx, cy, dist)
+			color = a.palette.Secondary
+			drawStarTrail(f, x, y, cx, cy, dist, a.palette)
 		}
 		f.Set(x, y, Cell{Ch: ch, Color: color, Bold: dist > 0.62})
 	}
 	return f
 }
 
-func drawStarTrail(f Frame, x, y int, cx, cy, dist float64) {
+func drawStarTrail(f Frame, x, y int, cx, cy, dist float64, palette Palette) {
 	dx := float64(x) - cx
 	dy := float64(y) - cy
 	length := int(1 + dist*4)
 	for i := 1; i <= length; i++ {
 		tx := x - int(dx*0.04*float64(i))
 		ty := y - int(dy*0.05*float64(i))
-		f.Set(tx, ty, Cell{Ch: '-', Color: ColorCyan})
+		f.Set(tx, ty, Cell{Ch: '-', Color: palette.Cool})
 	}
 }

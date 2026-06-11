@@ -11,13 +11,14 @@ func (meteorShowerStyle) Description() string {
 	return "diagonal meteors streak across the terminal"
 }
 func (meteorShowerStyle) New(width, height int, opts Options) Animator {
-	return meteorShowerAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return meteorShowerAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type meteorShowerAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a meteorShowerAnimator) Frame(t float64) Frame {
@@ -34,13 +35,13 @@ func (a meteorShowerAnimator) Frame(t float64) Frame {
 		for j := 0; j < length; j++ {
 			tx := x - j
 			ty := y - j/2
-			cell := Cell{Ch: '.', Color: ColorYellow}
+			cell := Cell{Ch: '.', Color: a.palette.Warm}
 			if j == 0 {
-				cell = Cell{Ch: '*', Color: ColorBrightWhite, Bold: true}
+				cell = Cell{Ch: '*', Color: a.palette.Primary, Bold: true}
 			} else if j < 3 {
-				cell = Cell{Ch: '+', Color: ColorBrightYellow, Bold: true}
+				cell = Cell{Ch: '+', Color: a.palette.Accent, Bold: true}
 			} else if math.Sin(float64(j)+t*10) > 0 {
-				cell.Color = ColorBrightRed
+				cell.Color = a.palette.Highlight
 			}
 			f.Set(tx, ty, cell)
 		}

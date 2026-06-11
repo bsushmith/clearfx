@@ -11,13 +11,14 @@ func (blackHoleStyle) Description() string {
 	return "particles spiral inward and collapse into the center"
 }
 func (blackHoleStyle) New(width, height int, opts Options) Animator {
-	return blackHoleAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return blackHoleAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type blackHoleAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a blackHoleAnimator) Frame(t float64) Frame {
@@ -42,13 +43,13 @@ func (a blackHoleAnimator) Frame(t float64) Frame {
 			continue
 		}
 		ch := '.'
-		color := ColorBrightBlue
+		color := a.palette.Accent
 		if r < maxR*0.16 {
 			ch = '*'
-			color = ColorBrightMagenta
+			color = a.palette.Highlight
 		} else if i%5 == 0 {
 			ch = '+'
-			color = ColorBrightCyan
+			color = a.palette.Secondary
 		}
 		f.Set(x, y, Cell{Ch: ch, Color: color, Bold: r < maxR*0.25})
 	}
@@ -58,7 +59,7 @@ func (a blackHoleAnimator) Frame(t float64) Frame {
 		angle := float64(i)/96*math.Pi*2 + t*math.Pi*5
 		x := int(cx + math.Cos(angle)*ringR)
 		y := int(cy + math.Sin(angle)*ringR*0.45)
-		f.Set(x, y, Cell{Ch: '@', Color: ColorBrightWhite, Bold: true})
+		f.Set(x, y, Cell{Ch: '@', Color: a.palette.Primary, Bold: true})
 	}
 	f.Set(int(cx), int(cy), Cell{Ch: ' ', Color: ColorDefault})
 	return f

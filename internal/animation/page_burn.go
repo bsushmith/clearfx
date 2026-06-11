@@ -11,13 +11,14 @@ func (pageBurnStyle) Description() string {
 	return "burning edges consume the screen inward"
 }
 func (pageBurnStyle) New(width, height int, opts Options) Animator {
-	return pageBurnAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return pageBurnAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type pageBurnAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a pageBurnAnimator) Frame(t float64) Frame {
@@ -40,15 +41,15 @@ func (a pageBurnAnimator) Frame(t float64) Frame {
 			if centerDist < maxD-burn*0.82 {
 				continue
 			}
-			cell := Cell{Ch: '.', Color: ColorRed}
+			cell := Cell{Ch: '.', Color: a.palette.Highlight}
 			if front > 7 {
 				cell = Cell{Ch: ' ', Color: ColorDefault}
 			} else if front > 4 {
-				cell = Cell{Ch: '#', Color: ColorBrightRed, Bold: true}
+				cell = Cell{Ch: '#', Color: a.palette.Accent, Bold: true}
 			} else if front > 2 {
-				cell = Cell{Ch: '*', Color: ColorBrightYellow, Bold: true}
+				cell = Cell{Ch: '*', Color: a.palette.Warm, Bold: true}
 			} else {
-				cell = Cell{Ch: '@', Color: ColorBrightWhite, Bold: true}
+				cell = Cell{Ch: '@', Color: a.palette.Primary, Bold: true}
 			}
 			f.Set(x, y, cell)
 		}

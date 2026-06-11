@@ -107,6 +107,18 @@ func TestNewEffectsChangeAcrossFrames(t *testing.T) {
 	}
 }
 
+func TestPaletteChangesFrameColors(t *testing.T) {
+	style, err := Get("matrix-rain")
+	if err != nil {
+		t.Fatal(err)
+	}
+	classic := style.New(60, 20, Options{Intensity: "medium", Palette: "classic"}).Frame(0.5)
+	matrix := style.New(60, 20, Options{Intensity: "medium", Palette: "matrix"}).Frame(0.5)
+	if framesEqual(classic, matrix) {
+		t.Fatal("expected palette selection to change matrix-rain frame output")
+	}
+}
+
 func framesEqual(a, b Frame) bool {
 	if a.Width != b.Width || a.Height != b.Height || len(a.Cells) != len(b.Cells) {
 		return false

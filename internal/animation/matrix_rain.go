@@ -11,13 +11,14 @@ func (matrixRainStyle) Description() string {
 	return "green code rain falls down and wipes the terminal"
 }
 func (matrixRainStyle) New(width, height int, opts Options) Animator {
-	return matrixRainAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return matrixRainAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type matrixRainAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a matrixRainAnimator) Frame(t float64) Frame {
@@ -38,11 +39,11 @@ func (a matrixRainAnimator) Frame(t float64) Frame {
 				continue
 			}
 			idx := (x*31 + y*13 + int(t*40)) % len(chars)
-			cell := Cell{Ch: chars[idx], Color: ColorGreen}
+			cell := Cell{Ch: chars[idx], Color: a.palette.Primary}
 			if i == 0 {
-				cell = Cell{Ch: chars[idx], Color: ColorBrightWhite, Bold: true}
+				cell = Cell{Ch: chars[idx], Color: a.palette.Highlight, Bold: true}
 			} else if i < 3 {
-				cell.Color = ColorBrightGreen
+				cell.Color = a.palette.Secondary
 				cell.Bold = true
 			}
 			f.Set(x, y, cell)

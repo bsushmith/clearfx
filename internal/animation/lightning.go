@@ -11,13 +11,14 @@ func (lightningStyle) Description() string {
 	return "branching lightning flashes across the terminal"
 }
 func (lightningStyle) New(width, height int, opts Options) Animator {
-	return lightningAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return lightningAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type lightningAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a lightningAnimator) Frame(t float64) Frame {
@@ -37,23 +38,23 @@ func (a lightningAnimator) Frame(t float64) Frame {
 		} else if y%3 == 1 {
 			ch = '\\'
 		}
-		f.Set(x, y, Cell{Ch: ch, Color: ColorBrightWhite, Bold: true})
+		f.Set(x, y, Cell{Ch: ch, Color: a.palette.Primary, Bold: true})
 		if y%5 == 2 {
-			drawLightningBranch(f, x, y, -1, 4+y%5)
+			drawLightningBranch(f, a.palette, x, y, -1, 4+y%5)
 		}
 		if y%7 == 3 {
-			drawLightningBranch(f, x, y, 1, 3+y%4)
+			drawLightningBranch(f, a.palette, x, y, 1, 3+y%4)
 		}
 	}
 	return f
 }
 
-func drawLightningBranch(f Frame, x, y, dir, length int) {
+func drawLightningBranch(f Frame, palette Palette, x, y, dir, length int) {
 	for i := 1; i <= length; i++ {
 		ch := '/'
 		if dir > 0 {
 			ch = '\\'
 		}
-		f.Set(x+dir*i, y+i/2, Cell{Ch: ch, Color: ColorBrightCyan, Bold: true})
+		f.Set(x+dir*i, y+i/2, Cell{Ch: ch, Color: palette.Secondary, Bold: true})
 	}
 }

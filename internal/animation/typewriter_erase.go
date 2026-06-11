@@ -11,13 +11,14 @@ func (typewriterEraseStyle) Description() string {
 	return "rows erase with a typewriter cursor trail"
 }
 func (typewriterEraseStyle) New(width, height int, opts Options) Animator {
-	return typewriterEraseAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return typewriterEraseAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type typewriterEraseAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a typewriterEraseAnimator) Frame(t float64) Frame {
@@ -33,13 +34,13 @@ func (a typewriterEraseAnimator) Frame(t float64) Frame {
 				continue
 			}
 			if pos <= cursor {
-				f.Set(x, y, Cell{Ch: '_', Color: ColorBrightWhite, Bold: true})
+				f.Set(x, y, Cell{Ch: '_', Color: a.palette.Primary, Bold: true})
 				continue
 			}
 			idx := (x*7 + y*13 + int(math.Sin(t*8)*10)) % len(glyphs)
-			color := ColorBrightBlack
+			color := a.palette.Dim
 			if pos-cursor < a.width {
-				color = ColorWhite
+				color = a.palette.Neutral
 			}
 			f.Set(x, y, Cell{Ch: glyphs[idx], Color: color})
 		}

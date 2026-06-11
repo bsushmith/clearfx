@@ -13,13 +13,14 @@ func (rainstormStyle) Description() string {
 	return "slanted rain falls with occasional lightning flashes"
 }
 func (rainstormStyle) New(width, height int, opts Options) Animator {
-	return rainstormAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity)}
+	return rainstormAnimator{width: width, height: height, intensity: intensityScale(opts.Intensity), palette: PaletteFor(opts.Palette)}
 }
 
 type rainstormAnimator struct {
 	width     int
 	height    int
 	intensity float64
+	palette   Palette
 }
 
 func (a rainstormAnimator) Frame(t float64) Frame {
@@ -35,21 +36,21 @@ func (a rainstormAnimator) Frame(t float64) Frame {
 		fall := int(t * float64(a.height*3+(i%17)))
 		x := x0 - fall/3
 		y := (y0 + fall) % a.height
-		cell := Cell{Ch: '/', Color: ColorBrightBlue}
+		cell := Cell{Ch: '/', Color: a.palette.Secondary}
 		if i%4 == 0 {
-			cell = Cell{Ch: '|', Color: ColorCyan}
+			cell = Cell{Ch: '|', Color: a.palette.Cool}
 		}
 		f.Set(x, y, cell)
-		f.Set(x+1, y-1, Cell{Ch: '/', Color: ColorBlue})
+		f.Set(x+1, y-1, Cell{Ch: '/', Color: a.palette.Accent})
 	}
 
 	if math.Sin(t*math.Pi*10) > 0.82 {
 		x := a.width/3 + int(math.Sin(t*math.Pi*3)*float64(a.width)/5)
 		for y := 0; y < a.height/2; y++ {
 			x += int(math.Sin(float64(y)*1.4+t*12) * 1.2)
-			f.Set(x, y, Cell{Ch: '/', Color: ColorBrightWhite, Bold: true})
+			f.Set(x, y, Cell{Ch: '/', Color: a.palette.Primary, Bold: true})
 			if y%4 == 0 {
-				f.Set(x+1, y+1, Cell{Ch: '\\', Color: ColorBrightCyan, Bold: true})
+				f.Set(x+1, y+1, Cell{Ch: '\\', Color: a.palette.Secondary, Bold: true})
 			}
 		}
 	}
