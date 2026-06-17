@@ -154,7 +154,7 @@ func TestForceANSIClearsNonInteractiveOutput(t *testing.T) {
 	if err != nil && n == 0 {
 		t.Fatal(err)
 	}
-	if got := string(buf[:n]); got != terminal.Reset+terminal.ClearScreen+terminal.Home {
+	if got := string(buf[:n]); got != terminal.Reset+terminal.ClearScrollback+terminal.ClearScreen+terminal.Home {
 		t.Fatalf("output = %q", got)
 	}
 }

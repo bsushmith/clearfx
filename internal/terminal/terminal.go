@@ -11,6 +11,7 @@ import (
 )
 
 const (
+	ClearScrollback = "\x1b[3J"
 	ClearScreen = "\x1b[2J"
 	Home        = "\x1b[H"
 	HideCursor  = "\x1b[?25l"
@@ -81,6 +82,6 @@ func RenderFrame(w io.Writer, frame animation.Frame) error {
 }
 
 func Clear(w io.Writer) error {
-	_, err := io.WriteString(w, Reset+ClearScreen+Home)
+	_, err := io.WriteString(w, Reset+ClearScrollback+ClearScreen+Home)
 	return err
 }

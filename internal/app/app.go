@@ -21,7 +21,7 @@ import (
 	"github.com/bsushmith/clearfx/internal/terminal"
 )
 
-const version = "0.2.0"
+const version = "0.1.0"
 
 type fileConfig struct {
 	Style     string                `json:"style"`

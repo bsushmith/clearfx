@@ -30,7 +30,7 @@ func TestClear(t *testing.T) {
 	if err := Clear(&buf); err != nil {
 		t.Fatal(err)
 	}
-	if got := buf.String(); got != Reset+ClearScreen+Home {
+	if got := buf.String(); got != Reset+ClearScrollback+ClearScreen+Home {
 		t.Fatalf("clear = %q", got)
 	}
 }
